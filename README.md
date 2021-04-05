@@ -1,4 +1,4 @@
-# piottOs
+# MANUALE CENTOS
 Guida per l' installazione dei principali servizi per la costruzione di un sistema di hosting:
 
 - HTTP (php)
@@ -17,49 +17,50 @@ I servizi installati sono proposti nell'ordine di installazione effettuato (ciò
 
 Per ogni servizio installato sono riportati tutti i passaggi, comandi utilizzati e configurazioni effettuate. Ogni volta sarà indicato il file di configurazione coinvolto ed ogni altro file utilizzato per lo scopo.
 
-**NB:** *Tutti i comandi devono essere eseguiti con privilegi amministrativi*
+**NB:** *I comandi devono essere eseguiti con i privilegi amministrativi della macchina*
 
 ## Servizi
-CentOS deve essere stato installato e configurato per:
-- connessione di rete (LAN domestica)
-- utente con privilegi amministrativi oltre all'utente root (che non dovrebbe essere utilizzato da remoto)
+Scopi di CentOS:
+- connessione di rete
+- utente con privilegi amministrativi oltre all'utente root 
 
 ### *ssh*
 ##### File di configurazione
 `/etc/ssh/sshd_config`<br/><br/>
-Installazione e avvio del servizio. L'ultimo comando fa sì che il servizio sia attivo ad ogni riavvio del sistema. <br/>Il servizio se non diversamente configurato consente l'accesso da remoto a tutti gli utenti del sistema che possono fare login.<br/>Il testing può essere fatto con un client testuale ssh, anche dal server stesso, oppure utilizzando Termius
+Il comando eseguito in precedenza permette l' attivazione del servizio all'avvio del sistema. <br/>Il servizio se non diversamente configurato consente l'accesso da remoto a tutti gli utenti del sistema che possono fare login.<br/>Si può eseguire una sessione di testing utilizzando un client testuale ssh,dal server stesso o da programmi esterni come Putty o Termius
 ```
   yum install sshd
   systemctl start sshd
   systemctl enable sshd
 ```
-
-![LOGIN SSH - TERMIUS](img/termius.png)
-![MAIN PAGE APACHE](img/apache.png)
+![LOGIN SSH - PUTTY](img/Putty.PNG)
 
 ##### Configurazione di ssh con impostazioni di sicurezza
-Le *buone pratiche* indicano di modificare i comportamenti di default, quando possibile. In questo caso si impedir&aacute; l'accesso da remoto all'utente root e, inoltre, si indicheranno gli utenti abilitati all'accesso da remoto.<br/>Dopo aver fatto una copia del file di configurazione si proceder&aacute; a impostare i seguenti comandi
+
+Impediamo l' accesso da remoto all' utente amministratore (ROOT) e indichiamo a quali utenti potremo accedere da remoto.<br/>Dopo aver fatto una copia del file di configurazione si proceder&aacute; a impostare i seguenti comandi
 ```
   PermitRootLogin no
   AllowUsers ebeta
 ```
-nell'esempio sopra riportato si permette l'accesso al solo utente ***ebeta***<br/>
-Per rendre effettive le modifiche riavviare il servizio: `systemctl restart sshd`
+nell'esempio qui sopra, si permette l'accesso al solo utente ***ebeta***<br/>
+Per applicare le modifiche riavviare il servizio: `systemctl restart sshd`
 
 ### *http*
-Installazione e avvio del servizio:
+Comadi di installazione e avvio del servizio:
 ```
   yum install httpd
   systemctl start httpd
   systemctl enable httpd
 ```
 La ***DocumentRoot*** di Apache &eacute; `/var/www/html`
-Configurare il firewall per permettere l'accesso alla porta di default del servizio (80/tcp) e ricaricamento delle impostazioni
+Configurare il firewall per permettere l'accesso alla porta di default del servizio (80/tcp) e il caricamento delle impostazioni
 ```
   firewall-cmd --permanent --add-port=80/tcp
   firewall-cmd --reload
 ```
-Testing del servizio via web browser da host remoto `http://<ip_server>`
+Per testare il servizio via web browser da host remoto<br>
+inserire nella barra di ricerca:<br>
+`http://<ip_server>`
 
 ### *DBMS MySql*
 Installazione del servizio (`Mysql-server`) e del client CLI (`mysql`)
@@ -80,7 +81,7 @@ Testing del servizio da localhost con il client CLI
 ```
   mysql -u root -p
 ```
-accede al dbms con l'utente root, per il quale sar&aacute; richiesta la password (opzione -p)
+accede al dbms da root tramite la richiesta della password (-p)
 
 ### *PHP*
 Installazione della versione di default e verifica della versione
@@ -103,19 +104,21 @@ Testing via browser da host remoto `http://<ip_server>/info.php`
 ### *phpMyAdmin*
 ##### File di configurazione
 `/etc/httpd/conf.d/phpMyAdmin.conf`<br/><br/>
-Il package non è presente nei repository di default di CentOS 8, quindi è necessario installare il repo aggiuntivo `EPEL repo` (Extra Packages for Enterprise Linux)
+Il package non è provvisto nelle repository di default di CentOS 8, quindi è necessario installare il repo aggiuntivo `EPEL repo` (Extra Packages for Enterprise Linux)
 ```
   yum install epel-release
 ```
-Si procede con l'installazione di phpMyAdmin
+Installazione di phpMyAdmin
 ```
   yum install phpmyadmin
 ```
-Testare il funzionamento via browser da host remoto `http://<ip_server>/phpmyadmin`<br/>
-Configurazione sulle politiche di accesso alle directory (fare una copia del file di configurazione originale).<br/>
-Il setup originale prevede che sia ngato l'accesso per qualsiasi connessione che non provenga dal server stesso (127.0.0.1). Per accedere da remoto è necessario modificare tale impostazione e specificare l'indirizzo IP dell'host (o gli indirizzi) dal quale ci si vuole connettere. Per fare questo, nel file di configurazione sostiture tutte le stringhe `127.0.0.1` con l'ind IP della o delle macchine host.<br/>
-Testare il funzionamento via browser `http://<ip_server>/phpmyadmin` e accedere utilizzando le credenziali dell'utente root del DBMS (come precedentemente impostate).<br/>
-&Eacute; buona pratica aggiungere ulteriori livelli di sicurezza, come modificare le impostazioni di default (ad esempio l'alias utilizzato per accedere a phpMyAdmin) e installare un prompt di autenticazione per accedere alla pagina di login.
+-Testare il funzionamento via browser da host remoto `http://<ip_server>/phpmyadmin`<br/>
+-Configurazione sulle politiche di accesso alle directory (fare una copia del file di configurazione originale).<br/>
+Le impostazioni di default prevedono un accesso negato per qualsiasi connessione che non provenga dal server stesso (127.0.0.1). <br/>
+Per accedere da remoto è necessario modificare tale impostazione e specificare l'indirizzo IP dell'host (o gli indirizzi) dal quale ci si vuole connettere.<br/>
+-Per fare questo, nel file di configurazione sostiture tutte le stringhe `127.0.0.1` con l'ind IP della o delle macchine host.<br/>
+-Testare il funzionamento via browser `http://<ip_server>/phpmyadmin` ed effettuare l'accesso utilizzando le credenziali dell'utente root del DBMS.<br/>
+
 
 **Modifica degli alias di default**<br/>
 `http://<ip_server>/phpmyadmin` e `http://<ip_server>/phpMyAdmin`<br/>
