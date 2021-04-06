@@ -25,6 +25,7 @@ Scopi di CentOS:
 - utente con privilegi amministrativi oltre all'utente root 
 
 ### *ssh*
+![SSH](img/ssh.jpg)
 ##### File di configurazione
 `/etc/ssh/sshd_config`<br/><br/>
 Il comando eseguito in precedenza permette l' attivazione del servizio all'avvio del sistema. <br/>Il servizio se non diversamente configurato consente l'accesso da remoto a tutti gli utenti del sistema che possono fare login.<br/>Si può eseguire una sessione di testing utilizzando un client testuale ssh,dal server stesso o da programmi esterni come Putty o Termius
@@ -63,6 +64,7 @@ inserire nella barra di ricerca:<br>
 `http://<ip_server>`
 
 ### *DBMS MySql*
+![MySql -LOGO](img/mysql.png)
 Installazione del servizio (`Mysql-server`) e del client CLI (`mysql`)
 ```
   yum install mysql-server
@@ -84,6 +86,7 @@ Testing del servizio da localhost con il client CLI
 accede al dbms da root tramite la richiesta della password (-p)
 
 ### *PHP*
+![PHP](img/php.png)
 Installazione della versione di default e verifica della versione
 ```
   yum install php
@@ -102,6 +105,7 @@ Per testare il funzionamento di php creare un file `info.php`, nella ***Document
 Testing via browser da host remoto `http://<ip_server>/info.php`
 
 ### *phpMyAdmin*
+![PHPMYADMIN](img/phpmyadm.png)
 ##### File di configurazione
 `/etc/httpd/conf.d/phpMyAdmin.conf`<br/><br/>
 Il package non è provvisto nelle repository di default di CentOS 8, quindi è necessario installare il repo aggiuntivo `EPEL repo` (Extra Packages for Enterprise Linux)
@@ -281,3 +285,4 @@ Proteggere il file db `/etc/vsftpd/virtual-users.db`
   chmod 600 /etc/vsftpd/virtual-users.db
 ```
 Provare le funzionalità del servizio con FileZilla e con gli utenti virtuali...<br/>
+![FILEZILLA](img/filezilla.jpg)
