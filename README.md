@@ -178,7 +178,7 @@ Testare il trasferimento file (upload e download) e la navigazione nel filesyste
 Il servizio può essere testato anche con client CLI ftp.
 
 **Fare una copia del file di configurazione!**<br/>
-Impostazioni per rendere più sicuro il servizio e permettere l'accesso ai soli utenti di sistema:
+Impostazioni otimmizate per la salvaguardia della macchina:
 - impedire accesso utenti anonimi
 - abilitare il chroot'ing (chroot jail)
 - permettere agli utenti locali di poter scrivere nella propria home dir
@@ -190,12 +190,12 @@ Impostazioni per rendere più sicuro il servizio e permettere l'accesso ai soli 
   allow_writeable_chroot=YES
   use_localtime=YES
 ```
-creare il file vuoto `chroot_list`
+creare il file  `chroot_list`
 ```
   touch /etc/vsftpd/chroot_list
 ```
 Testing ...<br/>
-Se non funziona &eacute; necessario abilitare il boolean di SELinux `ftpd_full_access`
+in caso di esito negativo si deve abilitare il boolean di SELinux `ftpd_full_access`
 ```
   setsebool -P ftpd_full_access on
 ```
@@ -238,15 +238,16 @@ Creazione del DB a partire dal file appena creato
 ```
   db_load -T -t hash -f /tmp/virtual-users.txt /etc/vsftpd/virtual-users.db
 ```
-L'ultimo parametro del comando è il nome del file DB (si potrebbe anche utilizzare un DB MySQL...)
+L'ultimo parametro del comando è il nome del file DB
 
-Creazione file PAM `/etc/pam.d/vsftpd-virtual` (il nome pu&oacute; essere quello che si vuole ma non `vsftpd`) che user&aacute; il DB appena creato per validare gli utenti virtuali.<br/>Nel file `/etc/pam.d/vsftpd-virtual`
+Creazione file PAM `/etc/pam.d/vsftpd-virtual` (il nome pu&oacute; essere qualsiasi valore apparte `vsftpd`) il quale verrà usato dal DB appena creato per convalidare gli utenti virtuali.
+<br/>Nel file `/etc/pam.d/vsftpd-virtual`
 ```
   auth required pam_userdb.so db=/etc/vsftpd/virtual-users
   account required pam_userdb.so db=/etc/vsftpd/virtual-users
 ```
 Per ogni utente virtuale si crea una dir nella `DocumentRoot` di Apache, si assegna la ownership a ftp, si informa SELinux di consentire accesso in letura/scrittura al di fuori della home dir tipica (`/home`).<br/>
-L'esempio che segue &eacute; per l'utente `utente1` (replicare le parti necessarie per l'utente utente2)
+il seguente esempio vale per l'utente `utente1` (replicare le parti necessarie per gli altri utenti)
 ```
   mkdir -p /var/www/html/sito01
   chown ftp: /var/www/html/sito01
@@ -255,7 +256,7 @@ L'esempio che segue &eacute; per l'utente `utente1` (replicare le parti necessar
   restorecon -R -v /var/www/html
 ```
 
-Modfica del file di configurazione `/etc/vsftpd/vsftpd.conf`.<br/>
+Modficare il file di configurazione `/etc/vsftpd/vsftpd.conf`.<br/>
 Commentare
 ```
   #pam_service_name=vsftpd
@@ -279,4 +280,4 @@ Proteggere il file db `/etc/vsftpd/virtual-users.db`
   rm /tmp/virtual-users.txt
   chmod 600 /etc/vsftpd/virtual-users.db
 ```
-Testing del servizio con FileZilla e gli utenti virtuali...<br/>
+Provare le funzionalità del servizio con FileZilla e con gli utenti virtuali...<br/>
