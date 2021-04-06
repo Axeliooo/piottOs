@@ -286,3 +286,8 @@ Proteggere il file db `/etc/vsftpd/virtual-users.db`
 ```
 Provare le funzionalità del servizio con FileZilla e con gli utenti virtuali...<br/>
 ![FILEZILLA](img/filezilla.jpg)
+
+
+
+
+-A cura di Alex Gaiga
